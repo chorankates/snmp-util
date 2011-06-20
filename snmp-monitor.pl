@@ -40,7 +40,8 @@ sub get_xml {
     
     my $worker = XML::Simple->new();
     #my $document = $worker->XMLin($file, ForceArray => 1);
-    my $document = $worker->XMLin($file, KeyAttr => [ '+settings', '+host', '+rule']);
+    #my $document = $worker->XMLin($file, KeyAttr => [ '+settings', '+host', '+rule']);
+    my $document = $worker->XMLin($file, KeyAttr => [ 'settings', 'name']);
 
     return %{$document};
 }
