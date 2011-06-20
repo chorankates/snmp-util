@@ -6,7 +6,8 @@ use warnings;
 use 5.010;
 
 use Data::Dumper;
-use Net::SMTP;
+#use Net::SMTP; # not actually using this right now
+use SNMP::Util; # having trouble compiling this on 10.10
 use XML::Simple; # load configurations from XML
 
 my $config_file = shift @ARGV // 'snmp-monitor_default.rules.xml';
@@ -81,18 +82,28 @@ sub get_xml {
 }
 
 sub snmp_q {
-    # snmp_q($host, $snmp, $type) - given input, returns a normalized hash
-    my ($host, $snmp, $password, $type) = @_;
+    # snmp_q($host, $oid, $type) - given input, returns a normalized hash
+    my ($host, $oid, $password, $type) = @_;
     my %h;
     
-    if ($type eq 'Net::SMTP') {
+    if ($type eq 'SNMP::Util') {
+        my $worker = new SNMP::Util(
+            -device => $host,
+            -community => $password,
+        );
         
+        %h = $worker->walk(
+            -oids => \@oid,
+            -print => on, # maybe not..
+        );
+        
+        print "DBGZ" if 0;
         
     } elsif ($type eq 'snmp') {
         # snmpget -c public zeus system.sysDescr.0
         # will retrieve the variable system.sysDescr.0 from the host zeus using the community string public
         
-        my $cmd = "snmpget -c $password $host $snmp";
+        my $cmd = "snmpget -c $password $host $oid";
         my $results = `$cmd`;
         
         ## now need to parse this to match the Net::SMTP data structure
