@@ -4,9 +4,33 @@
 		<sleep>2</sleep> <!-- seconds to sleep between rule queries !-->
 		<notification_level>debug</notification_level> <!-- lowest level you want to receive notifications on !-->
 		<notify> <!-- need to have at least one <to> in one of the tags below. for every <to> tag, need to have a <from> tag including all context specific settings !-->
-				<xmpp></xmpp> <!-- <from> needs server, port, username, password !-->
-				<email></email> <!-- <from> needs server, port (username, password are optional) !-->
-			<sms></sms> <!-- need to find a public SMS API and then determine required information !-->
+			<xmpp>
+				<from>
+					<server>talk.google.com</server>
+					<port>5222</port>
+					<user>your_username_here</user>
+					<password>your_password_here</password> <!-- assuming you have at least one throwaway account !-->
+				</from>
+				<to> <!-- allow for multiple recipients !-->
+					<a>your main gtalk account</a> <!-- context specific !-->
+				</to>
+			</xmpp> <!-- <from> needs server, port, username, password !-->
+			<email>
+				<from>
+					<server>your.mailserver.com</server>
+					<port>25</port>
+					<user>your_username_here</user>
+					<password>your_password_here</password>
+				</from>
+				<to>
+					<a>you@yourotherdomain.com</a>
+				</to>
+			</email> <!-- <from> needs server, port (username, password are optional) !-->
+			<sms> <!-- need to ensure we either truncate messages to be under 160 (148?) characters !-->
+				<to>
+					<a>123-456-7890</a>
+				</to>
+			</sms> <!-- need to find a public SMS API and then determine required information !-->
 		</notify>
 		<match_type>regex</match_type> <!-- supports regex or glob matching !-->
 	</settings>
@@ -25,21 +49,33 @@
 			<description>router IB WiFi</description>
 			<ip>192.168.1.1</ip>
 		</host>
+		
+		<!-- shorter format.. still not one line !-->
+		<host description='greed wired interface' ip='192.168.1.121' mac=''>
+			<auth name='conor' ro='public' /> 
+		</host>
+		
+		<!-- shortest format !-->
+		<host description='proxy wired interface' ip='192.168.1.117' mac='' /> <!-- if no auth specified, will use public/public !-->
+		<host description='mifi' ip='192.168.1.1' mac='' /> <!-- because we have MAC addresses, will be able to build a hash of mac => ip addresses and only query the proper MAC!-->
+		<host description='gnosis' ip='192.168.1.254' mac='' />
+		
+		
 	</hosts>
 	<rules>
 	       <rule>
 			<active>yes</active>	
-                       <name>MAC scan of sinL WiFi</name>
-		       <snmp></snmp>		       
-		       <hosts>
-						<a>192.168.1.1</a>
-		       </hosts> <!-- can match IPs, MACs or descriptions (regex), the SNMP query will run against these !-->
-		       <expected>
-						<a>my_laptop</a> <!-- key names are purely referential, the contents of <expected> become an array !-->
-				</expected>
-				<unexpected>
-						<u>.*</u> <!-- sames as <expected> !-->
-				</unexpected>
+			<name>MAC scan of sinL WiFi</name>
+			<snmp></snmp>		       
+			<hosts>
+				<a>192.168.1.1</a>
+			</hosts> <!-- can match IPs, MACs or descriptions (regex), the SNMP query will run against these !-->
+			<expected>
+				<a>my_laptop</a> <!-- key names are purely referential, the contents of <expected> become an array !-->
+			</expected>
+			<unexpected>
+				<u>.*</u> <!-- sames as <expected> !-->
+			</unexpected>
         	</rule>
 		<rule>
 			<active>yes</active>
