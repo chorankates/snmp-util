@@ -1,0 +1,46 @@
+<xml>
+    <generic>        
+        <!-- http://exchange.nagios.org/directory/Plugins/Uncategorized/Software/SNMP/Uptime-through-SNMP/details !-->
+        <uptime>.1.3.6.1.2.1.1.3.0</uptime>
+        <!--
+            http://www.debianadmin.com/linux-snmp-oids-for-cpumemory-and-disk-statistics.html
+            the following seem to be geared towards default SNMPv2 Ubuntu installations
+        !-->
+        <cpu_1_minute_load>.1.3.6.1.4.1.2021.10.1.3.1</cpu_1_minute_load>
+        <cpu_5_minute_load>.1.3.6.1.4.1.2021.10.1.3.2</cpu_5_minute_load>
+        <cpu_15_minute_load>.1.3.6.1.4.1.2021.10.1.3.3</cpu_15_minute_load>
+        <cpu_user_time_pct>.1.3.6.1.4.1.2021.11.9.0</cpu_user_time_pct>
+        <cpu_user_time_raw>.1.3.6.1.4.1.2021.11.50.0</cpu_user_time_raw>
+        <cpu_system_time_pct>.1.3.6.1.4.1.2021.11.10.0</cpu_system_time_pct>
+        <cpu_system_time_raw>.1.3.6.1.4.1.2021.11.52.0</cpu_system_time_raw>
+        <cpu_idle_time_pct>.1.3.6.1.4.1.2021.11.11.0</cpu_idle_time_pct>
+        <cpu_idle_time_raw>.1.3.6.1.4.1.2021.11.53.0</cpu_idle_time_raw>
+        <cpu_nice_time_raw>.1.3.6.1.4.1.2021.11.51.0</cpu_nice_time_raw>
+        <mem_swap_size_total>.1.3.6.1.4.1.2021.4.3.0</mem_swap_size_total>
+        <mem_swap_size_available>.1.3.6.1.4.1.2021.4.4.0</mem_swap_size_available>
+        <mem_ram_total>.1.3.6.1.4.1.2021.4.5.0</mem_ram_total>
+        <mem_ram_used>.1.3.6.1.4.1.2021.4.6.0</mem_ram_used>
+        <mem_ram_free>.1.3.6.1.4.1.2021.4.11.0</mem_ram_free>
+        <mem_ram_shared>.1.3.6.1.4.1.2021.4.13.0</mem_ram_shared>
+        <mem_ram_buffered>.1.3.6.1.4.1.2021.4.14.0</mem_ram_buffered>
+        <mem_cached_total>.1.3.6.1.4.1.2021.4.15.0</mem_cached_total>
+    </generic>
+    <!--
+        http://www.dd-wrt.com/wiki/index.php/SNMP
+        SNMP queries for DD-WRT router v23 STD
+    !-->
+    <dd_wrt>
+        <nic_count>1.3.6.1.2.1.2.1.0</nic_count>
+        <nic_names>1.3.6.1.2.1.2.2.1.2.*</nic_names>
+        <bandwidth_current>1.3.6.1.2.1.2.2.1.5.*</bandwidth_current>
+        <nic_mac_addresses>1.3.6.1.2.1.2.2.1.6.*</nic_mac_addresses>
+        <wireless_clients>.1.3.6.1.4.1.2021.255.3.54.1.3.32.1.1.1</wireless_clients>
+    </dd_wrt>
+    
+    <!--
+        http://www.oidview.com/mibs/3955/LINKSYS-MODEL-MIB.html - unconfirmed
+        SNMP queries for the Linksys NAS200
+        
+    !-->
+    
+</xml>
