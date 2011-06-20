@@ -8,12 +8,20 @@ use 5.010;
 use Net::SMTP;
 use XML::Simple; # load configurations from XML
 
-my $config_file = shift @ARGV // 'snmp-monitor.default.conf';
+my $config_file = shift @ARGV // 'snmp-monitor_default.rules';
 
 # initialize and validate configuration
-%C::settings = get_xml();
+%C::configuration = get_xml($config_file);
+%C::settings = %{$C::configuration{settings}};
+# need to figure out the right way to derive the rules/hosts hashes.. XML::Simple is being uncooperative
+
+print "DBGZ" if 0;
 
 # determine and run queries
+foreach my $rule (keys %C::rules) {
+    print "DBGZ" if 0;
+    
+}
 
 # log out query responses
 
@@ -31,7 +39,8 @@ sub get_xml {
     return '?' unless -r $file;
     
     my $worker = XML::Simple->new();
-    my $document = $worker->XMLin($file);
+    #my $document = $worker->XMLin($file, ForceArray => 1);
+    my $document = $worker->XMLin($file, KeyAttr => [ '+settings', '+host', '+rule']);
 
     return %{$document};
 }
