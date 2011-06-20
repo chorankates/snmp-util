@@ -11,9 +11,10 @@ use XML::Simple; # load configurations from XML
 my $config_file = shift @ARGV // 'snmp-monitor_default.rules';
 
 # initialize and validate configuration
-%C::configuration = get_xml($config_file);
-%C::settings = %{$C::configuration{settings}};
-# need to figure out the right way to derive the rules/hosts hashes.. XML::Simple is being uncooperative
+%C::config = get_xml($config_file);
+%C::settings = %{$C::config{settings}};
+%C::hosts     = %{$C::config{hosts}};
+%C::rules      = %{$C::config{rules}};
 
 print "DBGZ" if 0;
 
@@ -44,4 +45,28 @@ sub get_xml {
     my $document = $worker->XMLin($file, KeyAttr => [ 'settings', 'name'], GroupTags => { hosts => 'host', rules => 'rule'});
 
     return %{$document};
+}
+
+sub snmp_q {
+    # snmp_q($host, $snmp, $type) - given input, returns a normalized hash
+    my ($host, $snmp, $password, $type) = @_;
+    my %h;
+    
+    if ($type eq 'Net::SMTP') {
+        
+    } elsif ($type eq 'snmp') {
+        # snmpget -c public zeus system.sysDescr.0
+        # will retrieve the variable system.sysDescr.0 from the host zeus using the community string public
+        
+        my $cmd = "snmpget -c $password $host $snmp";
+        my $results = `$cmd`;
+        
+        ## now need to parse this to match the Net::SMTP data structure
+        warn "WARN:: null return.. need to determine data structure";
+    
+    } else {
+        warn "WARN:: unknown 'type': $type\n";
+    }
+    
+    return %h;
 }
