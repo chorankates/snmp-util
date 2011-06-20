@@ -1,17 +1,18 @@
 <xml>
 	<settings>
 		<transport>Net::SMTP</transport> <!-- can be /usr/bin/snmp or Net::SNMP !-->
-		<sleep>2</sleep> <!-- seconds to sleep between queries !-->
-		<notify> <!-- need to have at least one <to> in one of the tags below. for every <to> tag, need to have a <from> tag including all context specific settings !--> 
-			<xmpp></xmpp> <!-- <from> needs server, port, username, password !-->
-			<email></email> <!-- <from> needs server, port (username, password are optional) !-->
+		<sleep>2</sleep> <!-- seconds to sleep between rule queries !-->
+		<notification_level>debug</notification_level> <!-- lowest level you want to receive notifications on !-->
+		<notify> <!-- need to have at least one <to> in one of the tags below. for every <to> tag, need to have a <from> tag including all context specific settings !-->
+				<xmpp></xmpp> <!-- <from> needs server, port, username, password !-->
+				<email></email> <!-- <from> needs server, port (username, password are optional) !-->
 			<sms></sms> <!-- need to find a public SMS API and then determine required information !-->
 		</notify>
-		<matchtype>regex</matchtype> <!-- supports regex or glob matching !-->
+		<match_type>regex</match_type> <!-- supports regex or glob matching !-->
 	</settings>
 	<hosts>
 		<host>
-			<desc>greed WiFi interface</desc>
+			<description>greed WiFi interface</description>
 			<ip>192.168.1.117</ip>
 			<mac></mac>
 			<auth>
@@ -21,7 +22,7 @@
 			</auth>
 		</host>
 		<host>
-			<desc>router IB WiFi</desc>
+			<description>router IB WiFi</description>
 			<ip>192.168.1.1</ip>
 		</host>
 	</hosts>
@@ -31,20 +32,20 @@
                        <name>MAC scan of sinL WiFi</name>
 		       <snmp></snmp>		       
 		       <hosts>
-				<a>192.168.1.1</a>
+						<a>192.168.1.1</a>
 		       </hosts> <!-- can match IPs, MACs or descriptions (regex), the SNMP query will run against these !-->
 		       <expected>
-				<a>my_laptop</a> <!-- key names are purely referential, the contents of <expected> become an array
-                	</expected>
-                	<unexpected>
-				<u>.*</a> <!-- sames as <expected> !-->
-                	</unexpected>
+						<a>my_laptop</a> <!-- key names are purely referential, the contents of <expected> become an array !-->
+				</expected>
+				<unexpected>
+						<u>.*</u> <!-- sames as <expected> !-->
+				</unexpected>
         	</rule>
 		<rule>
-			<active>no</rule>
-			<name>test</name>
-			<snmp value="" />
-			<hosts></hosts>
+			<active>yes</active>
+			<name>monitor system uptime</name>
+			<snmp value="" /> <!-- some generic uptime / ping check !-->
+			<hosts>.*</hosts>
 			<expected></expected>
 			<unexpexted></unexpexted>
 		</rule>
