@@ -1,8 +1,10 @@
 <xml>
 	<settings>
-		<transport>Net::SMTP</transport> <!-- can be /usr/bin/snmp or Net::SNMP !-->
+		<!-- <transport>Net::SMTP</transport> can be /usr/bin/snmpet or Net::SNMP !-->
+		<transport>/usr/bin/snmpget</transport>
 		<sleep>2</sleep> <!-- seconds to sleep between rule queries !-->
 		<notification_level>debug</notification_level> <!-- lowest level you want to receive notifications on !-->
+		<output_level>debug</output_level> <!-- affects STDOUT only, all output is logged !-->
 		<notify> <!-- need to have at least one <to> in one of the tags below. for every <to> tag, need to have a <from> tag including all context specific settings !-->
 			<xmpp>
 				<from>
@@ -36,7 +38,7 @@
 	</settings>
 	<hosts>
 		<host>
-			<description>greed WiFi interface</description>
+			<name>greed WiFi interface</name>
 			<ip>192.168.1.117</ip>
 			<mac></mac>
 			<auth>
@@ -46,19 +48,19 @@
 			</auth>
 		</host>
 		<host>
-			<description>router IB WiFi</description>
+			<name>router IB WiFi</name>
 			<ip>192.168.1.1</ip>
 		</host>
 		
 		<!-- shorter format.. still not one line !-->
-		<host description='greed wired interface' ip='192.168.1.121' mac=''>
+		<host name='greed wired interface' ip='192.168.1.121' mac=''>
 			<auth name='conor' ro='public' /> 
 		</host>
 		
 		<!-- shortest format !-->
-		<host description='proxy wired interface' ip='192.168.1.117' mac='' /> <!-- if no auth specified, will use public/public !-->
-		<host description='mifi' ip='192.168.1.1' mac='' /> <!-- because we have MAC addresses, will be able to build a hash of mac => ip addresses and only query the proper MAC!-->
-		<host description='gnosis' ip='192.168.1.254' mac='' />
+		<host name='proxy wired interface' ip='192.168.1.117' mac='' /> <!-- if no auth specified, will use public/public !-->
+		<host name='mifi' ip='192.168.1.1' mac='' /> <!-- because we have MAC addresses, will be able to build a hash of mac => ip addresses and only query the proper MAC!-->
+		<host name='gnosis' ip='192.168.1.254' mac='' />
 		
 		
 	</hosts>
