@@ -29,14 +29,13 @@ my $map_file = $C::settings{snmp_map} // 'snmp_map.xml';
 );
 
 $C::settings{time_start} = time;
-$C::settings{log_file} = "log-$0.log";
-
-print "DBGZ" if 0;
+$C::settings{log_file} = "log-$C::settings{time_start}_$0-$$.log";
 
 if ($C::settings{output_level} eq 'debug') {
-    _print(0, Dumper(\%C::settings));
-    _print(0, Dumper(\%C::hosts));
-    _print(0, Dumper(\%C::rules));
+    _print(0, Dumper('%C::settings', \%C::settings));
+    _print(0, Dumper('%C::hosts',     \%C::hosts));
+    _print(0, Dumper('%C::rules',      \%C::rules));
+    _print(0, Dumper('%C::snmp',     \%C::snmp));
 }
 
 # determine and run queries
@@ -141,7 +140,7 @@ sub _print {
     }
     
     # print to the log file
-    open (my $fh, '<', $C::settings{log_file}) or warn "WARN:: unable to open '$C::settings{log_file}'";
+    open (my $fh, '>>', $C::settings{log_file}) or warn "WARN:: unable to open '$C::settings{log_file}': $!";
     print $fh $_ foreach (@msg);
     close ($fh);
     
