@@ -4,13 +4,10 @@ files:
 - snmp-map.xml: XML map containing OIDs and a human friendly name, some generic RAM/CPU OIDs as well as some specific to DD-WRT v23
 
 - snmp-monitor.pl: first snmp-util to be written, based on rules (OIDs, Hosts and expected/unexpected results) will send alerts (sms, email, xmpp)
-- snmp-monitor_default.rules.xml
+- snmp-monitor_default.rules.xml: configuration file for snmp-monitor.pl stubbed out with fake values as examples.. will provide (or replace this with) a blank template in the future
 
 todo:
 - finish first real draft of snmp-map.xml
-- better flesh out snmp-monitor_default.rules.xml with fake data
-- implement a pure Net::SNMP mechanism in send_q()
-- testing.. for all the code written, it has not been executed 
 - write sms send functionality
 - write email send functionaltiy
 - write xmpp send functionality
