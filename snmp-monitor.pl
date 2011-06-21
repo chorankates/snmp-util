@@ -6,8 +6,8 @@ use warnings;
 use 5.010;
 
 use Data::Dumper;
-#use Net::SMTP; # not actually using this right now
-use SNMP::Util; # having trouble compiling this on 10.10
+use Net::SMTP; 
+#use SNMP::Util; # having trouble compiling this on 10.10
 use XML::Simple; # load configurations from XML
 
 my $config_file = shift @ARGV // 'snmp-monitor_default.rules.xml';
@@ -93,12 +93,23 @@ sub snmp_q {
         );
         
         %h = $worker->walk(
-            -oids => \@oid,
-            -print => on, # maybe not..
+            oids => \($oid),
+            print => 'on', # maybe not..
         );
         
         print "DBGZ" if 0;
+    } elsif ($type eq 'Net::SNMP') {
+        my ($session, $error) = Net::SNMP->session(
+            hostname => $host,
+            community => $password, # need to define this dynamically 
+        );
+    
+        my $result = $session->get_bulk_request(
+            varbindlist => \($oid),
+        );
         
+        print "DBGZ" if 0;
+
     } elsif ($type eq 'snmp') {
         # snmpget -c public zeus system.sysDescr.0
         # will retrieve the variable system.sysDescr.0 from the host zeus using the community string public
