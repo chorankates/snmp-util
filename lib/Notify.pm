@@ -44,6 +44,9 @@ sub send_email {
 
 		   $worker->quit;		                      
 
+		# for now, if we make it this far, assume success
+		$results = 0;
+	
 	} elsif ($method eq 'MIME::Lite') { 
 		$results = "MIME::Lite support incomplete, use Net::SMTP";
 	} else {
@@ -67,31 +70,6 @@ sub send_sms {
 		# overload internal variables with user supplied ones
 	}
 
-	use WWW::SMS;
-	my $worker;
-
-    #$worker = WWW::SMS->new($to, $message);
-	$worker = WWW::SMS->new(
-		'1', 
-		'415',
-		'8120487',
-		'sent from perl'
-		);
-
-
-    print "DBGZ" if 0;
-
-	foreach my $gateway ($worker->gateways(sorted => 'reliability')) { 
-		if ($worker->send($gateway)) {
-			$results = 0;
-			last;
-		} else {
-			$results = "unable to send SMS to '$to' using gateway '$gateway'";
-			_print(2, $results);
-		}
-
-        # fall through
-	}
 
 	return $results;
 }
