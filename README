@@ -11,4 +11,5 @@ todo:
 - write sms send functionality
 - write email send functionaltiy
 - write xmpp send functionality
+- look in to using traps in addition to snmp-monitor.pl (see p. 196 of Essential SNMP)
 
