@@ -13,22 +13,24 @@ use lib './lib/';
 use Notify qw(send_email send_sms send_xmpp);
 use Util qw(_print); # move snmp_q() here? 
 
+my $foo = send_sms(14158120487, 'sent from my Perl script');
+
 my $config_file = shift @ARGV // 'snmp-monitor_default.rules.xml';
 
 # initialize and validate configuration
-%C::config = get_xml($config_file, 'config');
+%C::config   = get_xml($config_file, 'config');
 %C::settings = %{$C::config{settings}};
-%C::hosts     = %{$C::config{hosts}};
-%C::rules      = %{$C::config{rules}};
+%C::hosts    = %{$C::config{hosts}};
+%C::rules    = %{$C::config{rules}};
 
 my $map_file = $C::settings{snmp_map} // 'snmp_map.xml';
 %C::snmp = get_xml($map_file, 'snmp_map');
 
 %C::levels = (
-    DEBUG     => 4,
-    INFO        => 3,
+    DEBUG   => 4,
+    INFO    => 3,
     WARNING => 2,
-    ERROR     => 1,
+    ERROR   => 1,
 );
 
 $C::settings{time_start} = time;
@@ -36,8 +38,8 @@ $C::settings{log_file} = "log-$C::settings{time_start}_$0-$$.log";
 
 if ($C::settings{output_level} eq 'debug') {
     _print(0, Dumper('%C::settings', \%C::settings));
-    _print(0, Dumper('%C::hosts',     \%C::hosts));
-    _print(0, Dumper('%C::rules',      \%C::rules));
+    _print(0, Dumper('%C::hosts',    \%C::hosts));
+    _print(0, Dumper('%C::rules',    \%C::rules));
     _print(0, Dumper('%C::snmp',     \%C::snmp));
 }
 
@@ -49,31 +51,30 @@ foreach my $rule (keys %C::rules) {
 	
 	## need to have some handling here for .* host specifications
     
-    print "DBGZ" if 0;   
-
 	unless ($lh{active} eq 'yes') { 
 		_print(3, "skipping rule '$rule' (inactive)\n");
 		next RULE;                                         
-	 } else {
+	} else {
 		 _print(3, "executing rule '$rule':\n");
-
+    }
+	
 	HOST:
-	foreach my $host (@{$lh{hosts}) {
+	foreach my $host (@{$lh{hosts}}) {
         # do we want any host validation here? could do a gethostbyname(), but that only works for non-IP specs
 
-		my $password = $hosts{$host}{auth}{ro}; # for now, we only need RO
+		my $password = $C::hosts{$host}{auth}{ro}; # for now, we only need RO
 		my $version  = '2c'; # hardcoding for now until this is added to the schema
-        my %results  = snmp_q($host, $h{oid}, $password, $version, 'SNMP::Util');
+        my %results  = snmp_q($host, $lh{oid}, $password, $version, 'SNMP::Util');
 
 		EXPECTED:
-		foreach my $expected (@{$lh{expected}) {
+		foreach my $expected (@{$lh{expected}}) {
 			# need to come up with 'normalized' data structure before fleshing this out
 		
 		}
 
 
 		UNEXPECTED:
-		foreach my $unexpected (@{$lh{unexpected}) { 
+		foreach my $unexpected (@{$lh{unexpected}}) { 
 			# need to come up with 'normalized' data structure before fleshing this out
 		}
 
@@ -81,10 +82,7 @@ foreach my $rule (keys %C::rules) {
 
     }
           
-	
-
 }
-
 # log out query responses
 
 # check responses against rules/expectations
@@ -109,7 +107,7 @@ sub get_xml {
     #my $document = $worker->XMLin($file, KeyAttr => [ '+settings', '+host', '+rule']);
     my $document;
     eval {
-         $document = $worker->XMLin($file, KeyAttr => [ 'settings', 'name'], GroupTags => { hosts => 'host', rules => 'rule'}) if ($type eq 'config');
+         $document = $worker->XMLin($file, KeyAttr => [ 'settings', 'name'], GroupTags => { hosts => 'host', rules => 'rule'}) if ($type eq 'config'); # probably need to add ForceArray here
          $document = $worker->XMLin($file) if ($type eq 'snmp_map');
     };
     
@@ -166,26 +164,3 @@ sub snmp_q {
     return %h;
 }
 
-sub _print {
-    # _print($level, $message) - if $level >= $C::settings{output_level}, print to STDOUT, always log
-    my $level = shift;
-    my @msg = @_;
-    
-    if ($level !~ /\d/) {
-        # allow calls without levels, force print it
-        $msg[0] = $level;
-        $level = 0;
-    }
-    
-    # print to the log file
-    open (my $fh, '>>', $C::settings{log_file}) or warn "WARN:: unable to open '$C::settings{log_file}': $!";
-    print $fh $_ foreach (@msg);
-    close ($fh);
-    
-    # print to STDOUT
-    if ($level <= $C::levels{uc($C::settings{output_level})}) {
-        print $_ foreach @_;
-    }
-    
-    return;
-}
