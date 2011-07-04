@@ -13,7 +13,7 @@ use lib './lib/';
 use Notify qw(send_email send_sms send_xmpp);
 use Util qw(_print); # move snmp_q() here? 
 
-my $foo = send_sms(14158120487, 'sent from my Perl script');
+#my $foo = send_sms(14158120487, 'sent from my Perl script');
 
 my $config_file = shift @ARGV // 'snmp-monitor_default.rules.xml';
 
