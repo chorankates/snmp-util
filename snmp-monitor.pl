@@ -7,8 +7,11 @@ use 5.010;
 
 use Data::Dumper;
 use Net::SMTP; 
-#use SNMP::Util; # having trouble compiling this on 10.10
 use XML::Simple; # load configurations from XML
+
+use lib './lib/';
+use Notify qw(send_email send_sms send_xmpp);
+use Util qw(_print); # move snmp_q() here? 
 
 my $config_file = shift @ARGV // 'snmp-monitor_default.rules.xml';
 
@@ -39,11 +42,46 @@ if ($C::settings{output_level} eq 'debug') {
 }
 
 # determine and run queries
+RULE:
 foreach my $rule (keys %C::rules) {
    
-    my %lh = $C::rules{$rule};
+    my %lh = %{$C::rules{$rule}};
+	
+	## need to have some handling here for .* host specifications
     
     print "DBGZ" if 0;   
+
+	unless ($lh{active} eq 'yes') { 
+		_print(3, "skipping rule '$rule' (inactive)\n");
+		next RULE;                                         
+	 } else {
+		 _print(3, "executing rule '$rule':\n");
+
+	HOST:
+	foreach my $host (@{$lh{hosts}) {
+        # do we want any host validation here? could do a gethostbyname(), but that only works for non-IP specs
+
+		my $password = $hosts{$host}{auth}{ro}; # for now, we only need RO
+		my $version  = '2c'; # hardcoding for now until this is added to the schema
+        my %results  = snmp_q($host, $h{oid}, $password, $version, 'SNMP::Util');
+
+		EXPECTED:
+		foreach my $expected (@{$lh{expected}) {
+			# need to come up with 'normalized' data structure before fleshing this out
+		
+		}
+
+
+		UNEXPECTED:
+		foreach my $unexpected (@{$lh{unexpected}) { 
+			# need to come up with 'normalized' data structure before fleshing this out
+		}
+
+
+
+    }
+          
+	
 
 }
 
