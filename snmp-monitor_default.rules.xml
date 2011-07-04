@@ -42,7 +42,7 @@
 			<ip>192.168.1.117</ip>
 			<mac></mac>
 			<auth>
-				<name>trw-dd</name>
+				<!-- <name>trw-dd</name> this is only needed for SNMPv3 !-->
 				<ro>foo</ro>
 				<!-- <rw></rw> only monitoring for now, but can use this in place of RO !--> 
 			</auth>
@@ -50,6 +50,10 @@
 		<host>
 			<name>router IB WiFi</name>
 			<ip>192.168.1.1</ip>
+			<mac></mac>
+			<auth>
+				<ro>public</ro>
+			</auth>
 		</host>
 		
 		<!-- shorter format.. still not one line !-->
