@@ -127,6 +127,7 @@ sub send_xmpp {
 
 	return "authentication failed: @auth" unless $auth[0] eq 'ok';
 	
+	my @send_results;
 	# send a message   
 	foreach my $target (@targets) {
 		my $lresults = 0; 
@@ -138,14 +139,17 @@ sub send_xmpp {
 			resource => $resource, # could be used for sending to only a certain location, but if it doesn't match anything the user has, it delivers to all
 		) or $lresults = $!;
 																		         
-		$results = ($lresults) ? " failed to send message: $lresults" : 0;
-		_print(2, " $results\n");
+		push @send_results, $lresults;
+		_print(2, " $lresults\n");
 													         
 	}
 																											     
 	# endup
 	$xmpp->Disconnect();
 																														     
+	my @success = grep { $send_results[$_] eq 0; } 0..$#send_results;
+
+	$results = ($#send_results eq $#success) ? 0 : join(" : ", @send_results); # not the prettiest return format, but it will contain all responses (supporting multiple failures)
 
     return $results;
 }
