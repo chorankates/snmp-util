@@ -15,7 +15,7 @@ sub _print {
  		my $level = shift;
 		my @msg = @_;
 				    
-		if ($level !~ /\d/) {
+		if ($level !~ /^\d$/) {
 			# allow calls without levels, force print it
 			$msg[0] = $level;
 			$level = 0;
