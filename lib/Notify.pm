@@ -33,7 +33,7 @@ sub send_email {
 
 	if ($method eq 'Net::SMTP') {
 		# need to introduce some error checking below
-        my $worker = Net::SMTP->new($server_host . ':' . $server_port);
+		my $worker = Net::SMTP->new($server_host . ':' . $server_port);
 		   $worker->mail($from);
 		   $worker->to($to);
 
@@ -48,7 +48,19 @@ sub send_email {
 		$results = 0;
 	
 	} elsif ($method eq 'MIME::Lite') { 
-		$results = "MIME::Lite support incomplete, use Net::SMTP";
+		# need to add 
+		my $worker = MIME::Lite->new(
+        	To      => $to, # native CSV support
+			From    => $from,
+			Subject => $subject,
+			Type    => 'text/plain',
+			Data    => $message,
+		);
+
+        # this is ugly
+		my $lresults = $worker->send();
+		$results = ($lresults) ? 0 : $lresults;
+	
 	} else {
 		$results = "unknown method/module '$method'";
 		# fall through works for now..
