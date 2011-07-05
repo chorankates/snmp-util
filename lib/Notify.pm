@@ -9,10 +9,9 @@ our @EXPORT_OK = qw(send_email send_sms send_xmpp);
 use lib '.';
 use Util qw(_print);
 
-use Net::SMTP;   # few dependencies, ugly interface and plain text
+use Net::SMTP; # few dependencies, ugly interface and plain text
+use Net::XMPP; 
 #use MIME::Lite; # more dependencies, heavier, HTML/attachments allowed
-require WWW::SMS;
-
 
 sub send_email {
 	# send_email($to, $subject, $message, [\%extended_options]) - returns 0 or error message
@@ -88,6 +87,67 @@ sub send_sms {
 
 sub send_xmpp {
 	# send_xmpp($to, $message, [\%extended_options]) - returns 0 or error message
+	my ($to, $message, $href) = @_;
+	my $results = 1;
+	
+	my ($hostname, $port, $component);
+	my ($user, $password, $resource);
+	if (defined $href and ref $href eq 'HASH') { 
+		# assume everything has been specified, relying on error checking below		
+	} else {
+		# use the configuration in %C::settings
+	}
+
+	my $worker = Net::XMPP::Client->new();
+	
+	my @targets = split(',', $to); # CSV
+	my $connect_results = 0;
+
+	my $status = $xmpp->Connect(
+		hostname       => $hostname,
+		port           => $port,
+		componentname  => $component,
+		connectiontype => "tcpip", # when would it be anything else?
+		tls            => $tls,
+	) or $connect_results = $!;
+
+	return "connection failed: $connect_results"	if $connect_results;
+
+	# change hostname .. kind of
+	my $sid = $worker->{SESSION}->{id};
+	$worker->{STREAM}->{SIDS}->{$sid}->{hostname} = 'Notify.pm';
+																       
+	# authenticate 
+	my @auth = $worker->AuthSend(
+		username => $user,
+		password => $password,
+		resource => $resource, # this identifies the sender
+	);
+																			       
+
+	return "authentication failed: @auth" unless $auth[0] eq 'ok';
+	
+	# send a message   
+	foreach my $target (@targets) {
+		my $lresults = 0; 
+		_print(2, "\tsending alert to '$target'..");
+			         
+		$worker->MessageSend(
+			to       => $target,
+			body     => $message,
+			resource => $resource, # could be used for sending to only a certain location, but if it doesn't match anything the user has, it delivers to all
+		) or $lresults = $!;
+																		         
+		$results = ($lresults) ? " failed to send message: $lresults" : 0;
+		_print(2, " $results\n");
+													         
+	}
+																											     
+	# endup
+	$xmpp->Disconnect();
+																														     
+
+    return $results;
 }
 
 
