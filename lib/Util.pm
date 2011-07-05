@@ -27,7 +27,7 @@ sub _print {
 		close ($fh);
 																			    
 		# print to STDOUT
-		if ($level <= $C::levels{uc($C::settings{output_level})}) {
+		if ($level <= $C::levels{uc($C::settings{output_level})}) { # probably need to load this variable from snmp-monitor.pl
 			print $_ foreach @_;
 		}
 																										    

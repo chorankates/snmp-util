@@ -6,7 +6,7 @@ require Exporter;
 our @ISA = qw(Exporter);
 our @EXPORT_OK = qw(send_email send_sms send_xmpp);
 
-use lib '.';
+use lib 'lib/'; # this is fragile
 use Util qw(_print);
 
 use Net::SMTP; # few dependencies, ugly interface and plain text
@@ -92,6 +92,7 @@ sub send_xmpp {
 	
 	my ($hostname, $port, $component);
 	my ($user, $password, $resource);
+	my $tls = 512; # sane default
 	if (defined $href and ref $href eq 'HASH') { 
 		# assume everything has been specified, relying on error checking below		
 	} else {
@@ -103,7 +104,7 @@ sub send_xmpp {
 	my @targets = split(',', $to); # CSV
 	my $connect_results = 0;
 
-	my $status = $xmpp->Connect(
+	my $status = $worker->Connect(
 		hostname       => $hostname,
 		port           => $port,
 		componentname  => $component,
@@ -145,7 +146,7 @@ sub send_xmpp {
 	}
 																											     
 	# endup
-	$xmpp->Disconnect();
+	$worker->Disconnect();
 																														     
 	my @success = grep { $send_results[$_] eq 0; } 0..$#send_results;
 
